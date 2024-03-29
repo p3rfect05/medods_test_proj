@@ -12,6 +12,8 @@ type errorJson struct {
 	ErrorMessage string `json:"error_message"`
 }
 
+
+// returnErrorJson returns json containing the message error
 func returnErrorJson(w http.ResponseWriter, err error) {
 	error_json, err := json.MarshalIndent(errorJson{
 		ErrorMessage: err.Error(),
@@ -23,6 +25,8 @@ func returnErrorJson(w http.ResponseWriter, err error) {
 	w.Write(error_json)
 
 }
+
+// PostGetTokenPair returns pair of access and refresh tokens
 func PostGetTokenPair(w http.ResponseWriter, r *http.Request) {
 	type jsonRequest struct {
 		GUID string `json:"guid"`
@@ -84,6 +88,8 @@ func PostGetTokenPair(w http.ResponseWriter, r *http.Request) {
 	w.Write(resp_json)
 }
 
+
+// PostValidateToken checks access token for validity
 func PostValidateToken(w http.ResponseWriter, r *http.Request) {
 	type jsonRequest struct {
 		AccessToken string `json:"access_token"`
@@ -118,6 +124,8 @@ func PostValidateToken(w http.ResponseWriter, r *http.Request) {
 	w.Write(resp_json)
 }
 
+
+// PostRefreshTokens invalidates old refresh tokens, and give new one
 func PostRefreshTokens(w http.ResponseWriter, r *http.Request) {
 	type jsonRequest struct {
 		RefreshToken string `json:"refresh_token"`

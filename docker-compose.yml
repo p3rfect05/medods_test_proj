@@ -7,4 +7,9 @@ services:
     volumes:
       - './mongo:/data/db'
 
-  
+  app:
+    build:
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - "80:80"

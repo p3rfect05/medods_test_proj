@@ -1,4 +1,4 @@
-module tokens
+module github.com/p3rfect05/medods_interview_proj
 
 go 1.22.0
 
