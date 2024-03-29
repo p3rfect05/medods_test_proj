@@ -5,7 +5,6 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"errors"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -13,8 +12,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
-
-const encryptionType = "SHA512"
 
 var accessTokenLifetime = 5 * time.Minute
 var refreshTokenLifetime = 24 * time.Hour
@@ -55,15 +52,13 @@ func generateAccessToken(userID string) (string, error) {
 //		return s, nil
 //	}
 
+// generateRefreshToken generates token with format: <user_id>____<unix-time>
 func generateRefreshToken(user_id string, expiresAt time.Time) (string, error) {
 	toEncode := user_id + "____" + strconv.FormatInt(expiresAt.Unix(), 10)
-	log.Println("refresh token will expire at:", expiresAt.Unix(), expiresAt.Format(time.UnixDate))
-
 	encrypted, err := encrypt(toEncode)
 	if err != nil {
 		return "", err
 	}
-	log.Println("refresh token", Base64Encode(encrypted))
 	return Base64Encode(encrypted), nil
 
 }
@@ -75,7 +70,6 @@ func validateAccessToken(tokenString string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	log.Println(claims)
 
 	return true, nil
 
@@ -84,12 +78,12 @@ func validateAccessToken(tokenString string) (bool, error) {
 func validateRefreshToken(refreshTokenEncoded string) (string, error) {
 	// three possible scenarios
 	// since there is at most 1 active refresh token
-	// then 1) we get token and hashes match, we just reissue the pair
+	// then 1) we get token and hashes match, we just reissue a new pair
 	// 2) no active refresh tokens at all: it means we never issued the pair, since
 	// even in case refresh token expired it is still active, as expiration check is lazy
-	// or last check of expiration invalidated the refresh token
+	// in other case last check of expiration invalidated the refresh token
 	// 3) we get active refresh token but hashes differ,
-	// it means someone hijacked the refresh token, so we invalidate every refresh token (1)
+	// it means someone hijacked the refresh token, so we invalidate every refresh token (at most 1)
 	// for current user
 	token, err := Base64Decode(refreshTokenEncoded)
 
@@ -101,10 +95,9 @@ func validateRefreshToken(refreshTokenEncoded string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	log.Println("decoded token:", decodedToken)
+
 	tokenData := strings.Split(decodedToken, "____")
 	userGUID := tokenData[0]
-	//expirationDate, err := time.Parse(time.DateTime, tokenData[1])
 
 	tokenEntry, err := getActiveRefreshToken(userGUID)
 

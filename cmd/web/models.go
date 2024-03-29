@@ -70,17 +70,18 @@ func getActiveRefreshToken(GUID string) (*RefreshTokenEntry, error) {
 
 }
 
+// revokeRefreshTokens changes the only active token, if present, to is_revoked=true
+// making it inactive
 func revokeRefreshTokens(GUID string) error {
 	collection := client.Database(tokensDatabase).Collection(tokensCollection)
-	log.Println("revoking", GUID)
 	filter := bson.D{{"user_guid", GUID}, {"is_revoked", false}}
 
 	update := bson.D{{"$set", bson.D{
 		{"is_revoked", true},
 	}}}
 
-	res, err := collection.UpdateOne(context.TODO(), filter, update)
-	log.Println("revoked:", res.MatchedCount)
+	_, err := collection.UpdateOne(context.TODO(), filter, update)
+
 	if err != nil {
 		log.Println(err)
 		return err

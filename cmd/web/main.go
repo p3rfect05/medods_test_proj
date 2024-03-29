@@ -40,7 +40,6 @@ func main() {
 		}
 		cli, err = mongo.Connect(ctx, options.Client().ApplyURI(fmt.Sprintf("mongodb://mongo:%s", mongoPort)))
 	}
-	log.Println("CLIENT:", cli, err)
 	client = cli
 	defer func() {
 		if err = client.Disconnect(ctx); err != nil {
