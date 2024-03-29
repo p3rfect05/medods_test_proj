@@ -20,7 +20,7 @@ var accessTokenLifetime = 5 * time.Minute
 var refreshTokenLifetime = 24 * time.Hour
 
 // TODO: move to environment
-var key = "N1PCdw3M2B1TfJho"
+var key string
 
 const (
 	Success           = 0

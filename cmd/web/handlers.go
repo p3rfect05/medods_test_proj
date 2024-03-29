@@ -12,7 +12,6 @@ type errorJson struct {
 	ErrorMessage string `json:"error_message"`
 }
 
-
 // returnErrorJson returns json containing the message error
 func returnErrorJson(w http.ResponseWriter, err error) {
 	error_json, err := json.MarshalIndent(errorJson{
@@ -44,6 +43,12 @@ func PostGetTokenPair(w http.ResponseWriter, r *http.Request) {
 		returnErrorJson(w, err)
 		return
 	}
+
+	if json_req.GUID == "" {
+		returnErrorJson(w, errors.New("no guid or it is empty"))
+		return
+	}
+
 	GUID := json_req.GUID
 	accessToken, err := generateAccessToken(GUID)
 	if err != nil {
@@ -88,7 +93,6 @@ func PostGetTokenPair(w http.ResponseWriter, r *http.Request) {
 	w.Write(resp_json)
 }
 
-
 // PostValidateToken checks access token for validity
 func PostValidateToken(w http.ResponseWriter, r *http.Request) {
 	type jsonRequest struct {
@@ -124,7 +128,6 @@ func PostValidateToken(w http.ResponseWriter, r *http.Request) {
 	w.Write(resp_json)
 }
 
-
 // PostRefreshTokens invalidates old refresh tokens, and give new one
 func PostRefreshTokens(w http.ResponseWriter, r *http.Request) {
 	type jsonRequest struct {
@@ -133,9 +136,15 @@ func PostRefreshTokens(w http.ResponseWriter, r *http.Request) {
 
 	var json_req jsonRequest
 	err := json.NewDecoder(r.Body).Decode(&json_req)
+
 	if err != nil {
 		log.Println(err)
 		returnErrorJson(w, err)
+		return
+	}
+
+	if json_req.RefreshToken == "" {
+		returnErrorJson(w, errors.New("no refresh_token or it is empty"))
 		return
 	}
 

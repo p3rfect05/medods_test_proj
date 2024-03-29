@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,6 +19,9 @@ const mongoPort = "27017"
 var client *mongo.Client
 
 func main() {
+
+	key = os.Getenv("SECRETKEY")
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	i := 0

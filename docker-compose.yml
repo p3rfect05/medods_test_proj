@@ -6,6 +6,7 @@ services:
       - '27017:27017'
     volumes:
       - './mongo:/data/db'
+    
 
   app:
     build:
@@ -13,3 +14,6 @@ services:
     restart: always
     ports:
       - "80:80"
+
+    environment:
+      - SECRETKEY=1vxrfjk03craqmoisnrgh31nb73brlyz
