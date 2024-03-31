@@ -12,6 +12,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	key = "abcdfjk03craqmoisnrgh31nb73bqwer"
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	cli, err := mongo.Connect(ctx, options.Client().ApplyURI(fmt.Sprintf("mongodb://localhost:%s", mongoPort)))

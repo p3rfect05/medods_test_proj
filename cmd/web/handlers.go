@@ -12,6 +12,11 @@ type errorJson struct {
 	ErrorMessage string `json:"error_message"`
 }
 
+type jsonResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
 // returnErrorJson returns json containing the message error
 func returnErrorJson(w http.ResponseWriter, err error) {
 	error_json, err := json.MarshalIndent(errorJson{
@@ -29,10 +34,6 @@ func returnErrorJson(w http.ResponseWriter, err error) {
 func PostGetTokenPair(w http.ResponseWriter, r *http.Request) {
 	type jsonRequest struct {
 		GUID string `json:"guid"`
-	}
-	type jsonResponse struct {
-		AccessToken  string `json:"access_token"`
-		RefreshToken string `json:"refresh_token"`
 	}
 	w.Header().Set("Content-Type", "application/json")
 	var json_req jsonRequest
@@ -94,39 +95,39 @@ func PostGetTokenPair(w http.ResponseWriter, r *http.Request) {
 }
 
 // PostValidateToken checks access token for validity
-func PostValidateToken(w http.ResponseWriter, r *http.Request) {
-	type jsonRequest struct {
-		AccessToken string `json:"access_token"`
-	}
-	var json_req jsonRequest
-	err := json.NewDecoder(r.Body).Decode(&json_req)
+// func PostValidateToken(w http.ResponseWriter, r *http.Request) {
+// 	type jsonRequest struct {
+// 		AccessToken string `json:"access_token"`
+// 	}
+// 	var json_req jsonRequest
+// 	err := json.NewDecoder(r.Body).Decode(&json_req)
 
-	if err != nil {
-		log.Println(err)
-		returnErrorJson(w, err)
-		return
-	}
-	if ok, err := validateAccessToken(json_req.AccessToken); !ok {
-		log.Println(err)
-		returnErrorJson(w, err)
-		return
-	}
-	log.Println("Validation is successful")
+// 	if err != nil {
+// 		log.Println(err)
+// 		returnErrorJson(w, err)
+// 		return
+// 	}
+// 	if ok, err := validateAccessToken(json_req.AccessToken); !ok {
+// 		log.Println(err)
+// 		returnErrorJson(w, err)
+// 		return
+// 	}
+// 	log.Println("Validation is successful")
 
-	type jsonResponse struct {
-		Message string `json:"message"`
-	}
-	resp := jsonResponse{
-		Message: "Validation is successful",
-	}
+// 	type jsonResponse struct {
+// 		Message string `json:"message"`
+// 	}
+// 	resp := jsonResponse{
+// 		Message: "Validation is successful",
+// 	}
 
-	resp_json, err := json.MarshalIndent(resp, "", "\t")
-	if err != nil {
-		returnErrorJson(w, err)
-		return
-	}
-	w.Write(resp_json)
-}
+// 	resp_json, err := json.MarshalIndent(resp, "", "\t")
+// 	if err != nil {
+// 		returnErrorJson(w, err)
+// 		return
+// 	}
+// 	w.Write(resp_json)
+// }
 
 // PostRefreshTokens invalidates old refresh tokens, and give new one
 func PostRefreshTokens(w http.ResponseWriter, r *http.Request) {
@@ -188,10 +189,6 @@ func PostRefreshTokens(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		returnErrorJson(w, err)
 		return
-	}
-	type jsonResponse struct {
-		AccessToken  string `json:"access_token"`
-		RefreshToken string `json:"refresh_token"`
 	}
 	resp := jsonResponse{
 		AccessToken:  accessToken,
