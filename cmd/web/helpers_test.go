@@ -182,6 +182,10 @@ func Test_validateRefreshToken(t *testing.T) {
 		t.Errorf("should get hash mismatch error, got %s", err)
 	}
 
+	if _, err := getActiveRefreshToken(userID); err == nil {
+		t.Errorf("should have deleted all of the tokens when one is hijaacked")
+	}
+
 	// after mismatched hashes we should be sure that no refresh tokens are active
 
 	_, err = getActiveRefreshToken(userID)

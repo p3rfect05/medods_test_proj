@@ -112,6 +112,7 @@ func validateRefreshToken(refreshTokenEncoded string) (string, error) {
 	// 3), it means we need to revoke all of the active tokens
 	if err == bcrypt.ErrMismatchedHashAndPassword {
 		revokeRefreshTokens(userGUID)
+		deleteAllRefreshToken(userGUID)
 		return "", err
 	} else if err != nil {
 		return "", err
