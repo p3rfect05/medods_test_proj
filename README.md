@@ -13,3 +13,8 @@
 ### ***In case of failure***:  **{"error_message : "\<error_message_description\>"}**  
 ### ***In case of success***:  **{"refresh_token" : "\<new_refresh_token\>"}**  
 
+# Testing
+
+> [!NOTE]  
+> For tests to run properly, **mongoDB** container should be launched.
+
